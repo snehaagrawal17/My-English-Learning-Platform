@@ -1,0 +1,566 @@
+
+.roleplay-session {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem 4rem 1rem;
+}
+
+.session-setup .setup-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.setup-header h2 {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.setup-header p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+}
+
+.user-count-info {
+  background: #f3f4f6;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  display: inline-block;
+  font-weight: 600;
+  color: #374151;
+}
+
+.scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.scenario-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.scenario-card:hover {
+  border-color: #8b5cf6;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.scenario-card.selected {
+  border-color: #8b5cf6;
+  background: #faf5ff;
+}
+
+.scenario-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.scenario-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  color: #374151;
+}
+
+.scenario-card p {
+  margin: 0 0 1.5rem 0;
+  color: #6b7280;
+}
+
+.available-roles h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.roles-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.role-tag {
+  background: #e5e7eb;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.role-preview {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.role-preview h3 {
+  margin: 0 0 1.5rem 0;
+  color: #374151;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.preview-role {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.preview-user {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.preview-arrow {
+  color: #6b7280;
+}
+
+.preview-role-name {
+  font-weight: 600;
+  color: #8b5cf6;
+}
+
+.start-roleplay-button {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.start-roleplay-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+}
+
+/* Active Session Styles */
+.active-session .session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.scenario-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.scenario-info .scenario-icon {
+  font-size: 2rem;
+}
+
+.scenario-info h2 {
+  margin: 0;
+  color: #374151;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fef3c7;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+}
+
+.timer-icon {
+  font-size: 1.25rem;
+}
+
+.time {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #92400e;
+}
+
+.role-assignments {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.role-assignments h3 {
+  margin: 0 0 1.5rem 0;
+  color: #374151;
+}
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: #f0f9ff;
+  border: 2px solid #3b82f6;
+  border-radius: 0.75rem;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.user-role {
+  background: #3b82f6;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.session-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.recording-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.recording-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ef4444;
+}
+
+.recording-indicator.active {
+  animation: pulse 1s infinite;
+}
+
+.end-button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.end-button:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.scenario-guidance {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scenario-guidance h3 {
+  margin: 0 0 1rem 0;
+  color: #374151;
+}
+
+.scenario-guidance p {
+  margin: 0 0 1.5rem 0;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.tips h4 {
+  margin: 0 0 1rem 0;
+  color: #374151;
+}
+
+.tips ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #6b7280;
+}
+
+.tips li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Feedback Styles */
+.feedback-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.feedback-header h2 {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: #374151;
+}
+
+.feedback-header p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.overall-score {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.score-card {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .score-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.score-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.score-details h3 {
+  margin: 0 0 0.5rem 0;
+  color: #374151;
+}
+
+.score-details p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.individual-feedback {
+  margin-bottom: 2rem;
+}
+
+.individual-feedback h3 {
+  margin: 0 0 1.5rem 0;
+  color: #374151;
+  font-size: 1.5rem;
+}
+
+.feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.user-feedback {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.user-header h4 {
+  margin: 0;
+  color: #374151;
+}
+
+.user-score {
+  background: #10b981;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.feedback-details {
+  display: grid;
+  gap: 1rem;
+}
+
+.strengths, .improvements {
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.strengths {
+  background: #f0fdf4;
+  border-left: 4px solid #10b981;
+}
+
+.improvements {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+}
+
+.strengths h5, .improvements h5 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.strengths ul, .improvements ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.strengths li, .improvements li {
+  margin-bottom: 0.25rem;
+  color: #374151;
+}
+
+.session-suggestions {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.session-suggestions h3 {
+  margin: 0 0 1.5rem 0;
+  color: #374151;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #f0f9ff;
+  border-radius: 0.5rem;
+}
+
+.suggestion-icon {
+  font-size: 1.25rem;
+  margin-top: 0.125rem;
+}
+
+.suggestion-item p {
+  margin: 0;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.action-buttons {
+  text-align: center;
+}
+
+.new-session-button {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.new-session-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+}
+
+@media (max-width: 768px) {
+  .session-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .session-controls {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .user-header {
+    justify-content: center;
+  }
+  
+  .roleplay-session {
+    padding-bottom: 6rem;
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
