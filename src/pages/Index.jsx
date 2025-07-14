@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import SingleUserPractice from '../components/SingleUserPractice';
 import MultiUserSetup from '../components/MultiUserSetup';
 import Dashboard from '../components/Dashboard';
 import './Index.css';
+import AudioRecorder from '../components/AudioRecorder';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('dashboard');
@@ -79,6 +79,7 @@ const Index = () => {
       {/* Main Content */}
       <main className="main-content">
         {renderCurrentView()}
+        <AudioRecorder />
       </main>
 
       {/* Mobile Navigation */}
