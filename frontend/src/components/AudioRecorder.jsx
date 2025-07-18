@@ -51,12 +51,7 @@ function AudioRecorder() {
 
   return (
     <div>
-      <button onClick={startRecording} disabled={recording}>
-        Start Recording
-      </button>
-      <button onClick={stopRecording} disabled={!recording}>
-        Stop Recording
-      </button>
+      
       {transcript && (
         <div>
           <h4>Your Speech:</h4>

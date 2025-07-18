@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import './SingleUserPractice.css';
 
@@ -9,7 +8,7 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [audioURL, setAudioURL] = useState('');
   const [recordingTime, setRecordingTime] = useState(0);
-  const [currentStep, setCurrentStep] = useState('ready'); // ready, recording, analyzing, results
+  const [currentStep, setCurrentStep] = useState('ready');
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recognitionRef = useRef(null);
@@ -17,7 +16,6 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
 
   const startRecording = async () => {
     try {
-      // Reset states
       setAudioURL('');
       setTranscript('');
       setFeedback(null);
@@ -25,10 +23,7 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
       setCurrentStep('recording');
       audioChunksRef.current = [];
 
-      // Get microphone access
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      
-      // Set up MediaRecorder for audio recording
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       
@@ -42,16 +37,13 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
         setAudioURL(audioUrl);
       };
 
-      // Start recording
       mediaRecorder.start();
       setIsRecording(true);
 
-      // Start timer
       timerRef.current = setInterval(() => {
         setRecordingTime(prev => prev + 1);
       }, 1000);
 
-      // Set up speech recognition with better initialization
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
         recognitionRef.current = new SpeechRecognition();
@@ -60,12 +52,7 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
         recognitionRef.current.interimResults = true;
         recognitionRef.current.maxAlternatives = 1;
         
-        recognitionRef.current.onstart = () => {
-          console.log('Speech recognition started successfully');
-        };
-        
         recognitionRef.current.onresult = (event) => {
-          console.log('Speech recognition result received:', event.results);
           let finalTranscript = '';
           let interimTranscript = '';
           
@@ -78,10 +65,8 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
             }
           }
           
-          // Show both final and interim results in real-time
           if (finalTranscript || interimTranscript) {
             const currentTranscript = (transcript + ' ' + finalTranscript + ' ' + interimTranscript).trim();
-            console.log('Current transcript (including interim):', currentTranscript);
             setTranscript(currentTranscript);
           }
         };
@@ -93,19 +78,8 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
           }
         };
         
-        recognitionRef.current.onend = () => {
-          console.log('Speech recognition ended');
-        };
-        
-        // Start speech recognition
-        try {
-          recognitionRef.current.start();
-          console.log('Speech recognition start() called');
-        } catch (error) {
-          console.error('Error starting speech recognition:', error);
-        }
+        recognitionRef.current.start();
       } else {
-        console.error('Speech recognition not supported');
         alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
       }
 
@@ -117,13 +91,8 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
   };
 
   const stopRecording = () => {
-    console.log('Stopping recording...');
-    console.log('Current transcript before stopping:', transcript);
-    
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
-      
-      // Stop all tracks
       if (mediaRecorderRef.current.stream) {
         mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       }
@@ -132,7 +101,6 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
-        console.log('Speech recognition stopped');
       } catch (error) {
         console.error('Error stopping speech recognition:', error);
       }
@@ -145,44 +113,31 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
     setIsRecording(false);
     setCurrentStep('analyzing');
 
-    // Wait a bit longer for speech recognition to finish processing
     setTimeout(() => {
-      console.log('Final transcript for analysis:', transcript);
       if (transcript && transcript.trim().length > 0) {
-        console.log('Analyzing actual transcript:', transcript);
         handleAnalyzeAudio(transcript);
       } else {
-        console.log('No transcript detected, using fallback');
-        // Only use fallback if no speech was detected
         handleAnalyzeAudio("No speech detected. Please try speaking more clearly.");
       }
-    }, 2000); // Increased delay to ensure speech recognition finishes
+    }, 2000);
   };
 
   const handleAnalyzeAudio = async (text) => {
-    console.log('Starting analysis for text:', text);
     setTranscript(text);
     setIsAnalyzing(true);
     
     try {
-      console.log('Attempting to call LanguageTool API...');
-      // Grammar check using LanguageTool API
       const grammarResponse = await fetch("https://api.languagetoolplus.com/v2/check", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `text=${encodeURIComponent(text)}&language=en-US`
       });
       
-      console.log('API Response status:', grammarResponse.status);
-      
       if (!grammarResponse.ok) {
         throw new Error(`API responded with status: ${grammarResponse.status}`);
       }
       
       const grammarResult = await grammarResponse.json();
-      console.log('Grammar result:', grammarResult);
-      
-      // Generate corrected text
       let correctedText = text;
       const grammarErrors = [];
       
@@ -197,10 +152,7 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
         });
       }
 
-      // Generate improvement suggestions based on analysis
       const suggestions = generateSuggestions(text, grammarErrors);
-      
-      // Calculate score based on grammar errors
       const score = Math.max(50, 100 - (grammarErrors.length * 10));
       
       const feedbackData = {
@@ -212,12 +164,10 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
         recordingTime: recordingTime
       };
       
-      console.log('Setting feedback data:', feedbackData);
       setFeedback(feedbackData);
       setIsAnalyzing(false);
       setCurrentStep('results');
       
-      // Update user stats
       setUserStats(prev => ({
         ...prev,
         coins: prev.coins + Math.floor(score / 10),
@@ -226,9 +176,7 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
       
     } catch (error) {
       console.error('Error analyzing audio:', error);
-      console.log('Using fallback analysis...');
       
-      // Enhanced fallback analysis with basic grammar checking
       const fallbackAnalysis = performBasicGrammarCheck(text);
       
       const sampleFeedback = {
@@ -240,19 +188,16 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
         recordingTime: recordingTime
       };
       
-      console.log('Setting fallback feedback:', sampleFeedback);
       setFeedback(sampleFeedback);
       setIsAnalyzing(false);
       setCurrentStep('results');
     }
   };
 
-  // Basic grammar checking function for fallback
   const performBasicGrammarCheck = (text) => {
     const grammarErrors = [];
     let correctedText = text;
     
-    // Check for common grammar issues
     const checks = [
       {
         pattern: /\b(i)\b/g,
@@ -277,18 +222,6 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
         replacement: "you",
         message: 'Use proper word',
         suggestion: 'Use "you" instead of "u"'
-      },
-      {
-        pattern: /\b(2)\b/g,
-        replacement: "to",
-        message: 'Use proper word',
-        suggestion: 'Use "to" instead of "2"'
-      },
-      {
-        pattern: /\b(4)\b/g,
-        replacement: "for",
-        message: 'Use proper word',
-        suggestion: 'Use "for" instead of "4"'
       }
     ];
     
@@ -302,7 +235,6 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
       }
     });
     
-    // Check for sentence structure
     if (!text.endsWith('.') && !text.endsWith('!') && !text.endsWith('?')) {
       grammarErrors.push({
         error: 'Missing punctuation',
@@ -310,7 +242,6 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
       });
     }
     
-    // Check for very short sentences
     const words = text.split(' ').length;
     if (words < 3) {
       grammarErrors.push({
@@ -319,10 +250,7 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
       });
     }
     
-    // Generate suggestions
     const suggestions = generateSuggestions(text, grammarErrors);
-    
-    // Calculate score
     const score = Math.max(50, 100 - (grammarErrors.length * 15));
     
     return {
@@ -336,12 +264,10 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
   const generateSuggestions = (text, grammarErrors) => {
     const suggestions = [];
     
-    // Analyze text length
     if (text.length < 50) {
       suggestions.push("Try to speak for longer periods to practice more complex sentences");
     }
     
-    // Check for common issues
     if (text.toLowerCase().includes('um') || text.toLowerCase().includes('uh')) {
       suggestions.push("Try to reduce filler words like 'um' and 'uh' for more confident speech");
     }
@@ -350,13 +276,11 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
       suggestions.push("Focus on grammar rules, especially articles and verb tenses");
     }
     
-    // Vocabulary suggestions
     const words = text.split(' ').length;
     if (words < 10) {
       suggestions.push("Expand your vocabulary by using more descriptive words");
     }
     
-    // Pronunciation suggestions
     suggestions.push("Practice pronunciation of difficult words regularly");
     suggestions.push("Record yourself more often to track improvement");
     
@@ -381,15 +305,29 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const getScoreColor = (score) => {
+    if (score >= 90) return 'excellent';
+    if (score >= 80) return 'good';
+    if (score >= 70) return 'fair';
+    return 'needs-improvement';
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 'ready':
         return (
-          <div className="step-ready">
-            <div className="step-icon">🎤</div>
-            <h2>Ready to Practice</h2>
-            <p>Click the button below to start recording your speech</p>
-            <button className="start-recording-btn" onClick={startRecording}>
+          <div className="step-content step-ready">
+            <div className="step-header">
+              <div className="step-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+              </div>
+              <h2>Ready to Practice</h2>
+              <p>Click the button below to start recording your speech and get instant feedback</p>
+            </div>
+            <button className="primary-btn start-btn" onClick={startRecording}>
+              <span className="btn-icon">🎤</span>
               Start Recording
             </button>
           </div>
@@ -397,31 +335,36 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
 
       case 'recording':
         return (
-          <div className="step-recording">
-            <div className="recording-animation">
-              <div className="pulse-circle"></div>
-              <div className="pulse-circle"></div>
-              <div className="pulse-circle"></div>
-            </div>
-            <h2>Recording...</h2>
-            <p className="recording-time">{formatTime(recordingTime)}</p>
-            
-            {/* Real-time transcript display like Google Translate */}
-            <div className="realtime-transcript">
-              <div className="transcript-header">
-                <span className="mic-icon">🎤</span>
-                <span className="status-text">Listening...</span>
+          <div className="step-content step-recording">
+            <div className="recording-visual">
+              <div className="pulse-container">
+                <div className="pulse-ring"></div>
+                <div className="pulse-ring"></div>
+                <div className="pulse-ring"></div>
+                <div className="microphone-icon">🎤</div>
               </div>
-              <div className="transcript-content">
+            </div>
+            <h2>Recording in Progress</h2>
+            <div className="recording-timer">{formatTime(recordingTime)}</div>
+            
+            <div className="live-transcript">
+              <div className="transcript-header">
+                <div className="listening-indicator">
+                  <div className="listening-dot"></div>
+                  <span>Listening...</span>
+                </div>
+              </div>
+              <div className="transcript-display">
                 {transcript ? (
                   <p className="transcript-text">{transcript}</p>
                 ) : (
-                  <p className="placeholder-text">Start speaking...</p>
+                  <p className="transcript-placeholder">Start speaking and your words will appear here...</p>
                 )}
               </div>
             </div>
             
-            <button className="stop-recording-btn" onClick={stopRecording}>
+            <button className="primary-btn stop-btn" onClick={stopRecording}>
+              <span className="btn-icon">⏹️</span>
               Stop & Analyze
             </button>
           </div>
@@ -429,18 +372,21 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
 
       case 'analyzing':
         return (
-          <div className="step-analyzing">
-            <div className="analyzing-animation">
-              <div className="spinner"></div>
+          <div className="step-content step-analyzing">
+            <div className="analyzing-visual">
+              <div className="loader">
+                <div className="loader-circle"></div>
+                <div className="loader-circle"></div>
+                <div className="loader-circle"></div>
+              </div>
             </div>
             <h2>Analyzing Your Speech</h2>
-            <p>Checking grammar and providing suggestions...</p>
+            <p>AI is checking grammar, pronunciation, and providing personalized feedback...</p>
             
-            {/* Show what we're analyzing */}
             {transcript && (
-              <div className="analyzing-transcript">
-                <h3>Analyzing this text:</h3>
-                <p>"{transcript}"</p>
+              <div className="analyzing-preview">
+                <h3>Analyzing:</h3>
+                <div className="preview-text">"{transcript}"</div>
               </div>
             )}
           </div>
@@ -448,88 +394,76 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
 
       case 'results':
         return (
-          <div className="step-results">
+          <div className="step-content step-results">
             {feedback && (
               <>
                 <div className="results-header">
-                  <h2>Analysis Complete!</h2>
-                  <div className="score-display">
-                    <span className="score-label">Your Score:</span>
-                    <span className="score-value">{feedback.score}%</span>
+                  <h2>Analysis Complete! 🎉</h2>
+                  <div className={`score-badge ${getScoreColor(feedback.score)}`}>
+                    <div className="score-number">{feedback.score}</div>
+                    <div className="score-label">Score</div>
                   </div>
                 </div>
 
-                <div className="results-content">
-                  <div className="text-comparison">
-                    <div className="original-text">
-                      <h3>What You Said:</h3>
-                      <p>{feedback.originalText}</p>
-                    </div>
-                    <div className="corrected-text">
-                      <h3>Corrected Version:</h3>
-                      <p>{feedback.correctedText}</p>
+                <div className="results-grid">
+                  <div className="text-comparison-card">
+                    <h3>📝 Text Comparison</h3>
+                    <div className="comparison-content">
+                      <div className="original-section">
+                        <h4>What You Said:</h4>
+                        <p className="text-original">{feedback.originalText}</p>
+                      </div>
+                      <div className="corrected-section">
+                        <h4>Corrected Version:</h4>
+                        <p className="text-corrected">{feedback.correctedText}</p>
+                      </div>
                     </div>
                   </div>
 
                   {feedback.grammarErrors.length > 0 && (
-                    <div className="grammar-errors">
-                      <h3>Grammar Issues Found:</h3>
-                      {feedback.grammarErrors.map((error, index) => (
-                        <div key={index} className="error-item">
-                          <span className="error-icon">⚠️</span>
-                          <div className="error-content">
-                            <strong>{error.error}</strong>
-                            <p>{error.suggestion}</p>
+                    <div className="grammar-card">
+                      <h3>⚠️ Grammar Issues ({feedback.grammarErrors.length})</h3>
+                      <div className="errors-list">
+                        {feedback.grammarErrors.map((error, index) => (
+                          <div key={index} className="error-item">
+                            <div className="error-header">
+                              <span className="error-type">Grammar</span>
+                              <span className="error-title">{error.error}</span>
+                            </div>
+                            <p className="error-suggestion">{error.suggestion}</p>
                           </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="suggestions-card">
+                    <h3>💡 Improvement Tips</h3>
+                    <div className="suggestions-list">
+                      {feedback.suggestions.map((suggestion, index) => (
+                        <div key={index} className="suggestion-item">
+                          <div className="suggestion-icon">💡</div>
+                          <p>{suggestion}</p>
                         </div>
                       ))}
                     </div>
-                  )}
-
-                  <div className="improvement-suggestions">
-                    <h3>💡 Improvement Tips:</h3>
-                    {feedback.suggestions.map((suggestion, index) => (
-                      <div key={index} className="suggestion-item">
-                        <span className="suggestion-icon">💡</span>
-                        <p>{suggestion}</p>
-                      </div>
-                    ))}
                   </div>
 
                   {audioURL && (
-                    <div className="audio-playback">
-                      <h3>🎵 Your Recording:</h3>
-                      <audio controls src={audioURL} style={{ width: '100%', marginTop: '10px' }} />
+                    <div className="audio-card">
+                      <h3>🎵 Your Recording</h3>
+                      <div className="audio-player">
+                        <audio controls src={audioURL}>
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
                     </div>
                   )}
-
-                  {/* Manual transcript input as backup */}
-                  {!transcript || transcript.trim() === '' ? (
-                    <div className="manual-transcript">
-                      <h3>📝 Manual Transcript</h3>
-                      <p>Speech recognition didn't capture your words. Please type what you said:</p>
-                      <textarea 
-                        className="transcript-input"
-                        placeholder="Type what you said here..."
-                        rows="3"
-                        onChange={(e) => setTranscript(e.target.value)}
-                      />
-                      <button 
-                        className="analyze-manual-btn"
-                        onClick={() => {
-                          if (transcript && transcript.trim()) {
-                            handleAnalyzeAudio(transcript);
-                          }
-                        }}
-                      >
-                        Analyze My Text
-                      </button>
-                    </div>
-                  ) : null}
                 </div>
 
                 <div className="results-actions">
-                  <button className="new-session-btn" onClick={resetSession}>
+                  <button className="primary-btn practice-again-btn" onClick={resetSession}>
+                    <span className="btn-icon">🔄</span>
                     Practice Again
                   </button>
                 </div>
@@ -546,6 +480,28 @@ const SingleUserPractice = ({ userStats, setUserStats }) => {
   return (
     <div className="single-practice">
       <div className="practice-container">
+        <div className="progress-indicator">
+          <div className={`progress-step ${currentStep === 'ready' ? 'active' : ''} ${['recording', 'analyzing', 'results'].includes(currentStep) ? 'completed' : ''}`}>
+            <div className="step-number">1</div>
+            <span>Ready</span>
+          </div>
+          <div className="progress-line"></div>
+          <div className={`progress-step ${currentStep === 'recording' ? 'active' : ''} ${['analyzing', 'results'].includes(currentStep) ? 'completed' : ''}`}>
+            <div className="step-number">2</div>
+            <span>Recording</span>
+          </div>
+          <div className="progress-line"></div>
+          <div className={`progress-step ${currentStep === 'analyzing' ? 'active' : ''} ${currentStep === 'results' ? 'completed' : ''}`}>
+            <div className="step-number">3</div>
+            <span>Analyzing</span>
+          </div>
+          <div className="progress-line"></div>
+          <div className={`progress-step ${currentStep === 'results' ? 'active' : ''}`}>
+            <div className="step-number">4</div>
+            <span>Results</span>
+          </div>
+        </div>
+        
         {renderStep()}
       </div>
     </div>
